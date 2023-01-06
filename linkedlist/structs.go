@@ -96,6 +96,15 @@ func (l *List) find(val int) *Node {
 	fmt.Printf("fonund at index: %d\n", index)
 	return temp
 }
+func (l *List) findmid() *Node {
+	s, f := l.head, l.head
+	for (f.next != nil) && (f.next.next != nil) {
+		s = s.next
+		f = f.next.next
+	}
+	fmt.Println("mid = ", s.val)
+	return s
+}
 func (l *List) reverse() {
 	if l.length() == 1 {
 		return
@@ -113,16 +122,8 @@ func (l *List) reverse() {
 	l.head.next = nil
 	l.head = p
 }
-func (l *List) findmid() *Node {
-	s, f := l.head, l.head
-	for (f.next != nil) && (f.next.next != nil) {
-		s = s.next
-		f = f.next.next
-	}
-	fmt.Println("mid = ", s.val)
-	return s
-}
-func arrayTOList(a string) *List {
+
+func stringTOLList(a string) *List {
 	l := new(List)
 
 	aa := strings.Split(a, "")
@@ -133,6 +134,7 @@ func arrayTOList(a string) *List {
 
 	return l
 }
+
 func (l *List) copy() *List {
 	b := new(List)
 

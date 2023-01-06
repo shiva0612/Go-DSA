@@ -1,20 +1,22 @@
 package linkedlist
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func Check_revereBySize() {
 
-	a := arrayTOList("13")
+	a := stringTOLList("13")
 	a.revereBySize(3)
 }
 func Check_checkIfPalindrome() {
-	a := arrayTOList("1241")
+	a := stringTOLList("1241")
 	ans := a.checkIfPalindrome2()
 	fmt.Println("ans = ", ans)
 }
 
 func Check_mergeList() {
-	a, b := arrayTOList("234"), arrayTOList("239")
+	a, b := stringTOLList("234"), stringTOLList("239")
 	a.printlist()
 	b.printlist()
 	merged := mergeList(a, b)
@@ -22,15 +24,15 @@ func Check_mergeList() {
 }
 
 func Check_addNumbers() {
-	a, b := arrayTOList("234"), arrayTOList("239")
+	a, b := stringTOLList("234"), stringTOLList("239")
 	a.printlist()
 	b.printlist()
-	ans := addNumbers(a, b)
+	ans := additionOfNumbers(a, b)
 	ans.printlist()
 }
 
 func Check_rotateByK() {
-	a := arrayTOList("1")
+	a := stringTOLList("1")
 	a.rotateByK(3)
 	a.printlist()
 }

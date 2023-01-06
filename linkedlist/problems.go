@@ -87,6 +87,7 @@ func (a *List) checkIfPalindrome() bool {
 
 	return false
 }
+
 func (a *List) checkIfPalindrome2() bool {
 
 	mid := a.findmid()
@@ -147,7 +148,8 @@ func mergeList(a, b *List) *List {
 	}
 	return l
 }
-func addNumbers(a *List, b *List) *List {
+
+func additionOfNumbers(a *List, b *List) *List {
 	ans := new(List)
 
 	i, j, k := a.head, b.head, ans.head
