@@ -3,24 +3,36 @@ package main
 import "fmt"
 
 func main() {
-	rotate_90([][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}})
+	// a := [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+	a := [][]int{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}}
+	rotate_90(a)
+	printArray(a)
 }
 
 func rotate_90(a [][]int) {
-	for i := 1; i < len(a); i++ {
-		a[i][i-1], a[i-1][i] = a[i-1][i], a[i][i-1]
+
+	for i := 0; i < len(a); i++ {
+		for j := 0; j < i; j++ {
+			a[i][j], a[j][i] = a[j][i], a[i][j]
+		}
 	}
-	a[0][len(a)-1], a[len(a)-1][0] = a[len(a)-1][0], a[0][len(a)-1]
-	for _, v := range a {
-		reverse(v)
+
+	for i := 0; i < len(a); i++ {
+		reverse(a[i])
 	}
-	fmt.Println(a)
 }
+
 func reverse(v []int) {
 	s, e := 0, len(v)-1
 	for s < e {
 		v[s], v[e] = v[e], v[s]
 		s++
 		e--
+	}
+}
+
+func printArray(a [][]int) {
+	for i := 0; i < len(a); i++ {
+		fmt.Println(a[i])
 	}
 }
