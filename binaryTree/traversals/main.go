@@ -475,3 +475,28 @@ func zigzag(node *Node) [][]int {
 	}
 	return ans
 }
+
+// --------------------------------------------------------
+
+func isSymetric(node *Node) bool {
+	if node == nil{
+		return true
+	}
+	return helpSymetric(node.Left,node.Right)
+}
+
+func helpSymetric(left,right *Node) bool  {
+	if left == nil || right == nil{
+		return left == right
+	}
+	if left.Val != right.Val{
+		return false
+	}
+	return helpSymetric(left.Left,right.Right) && helpSymetric(left.Right,right.Left)
+}
+
+// --------------------------------------------------------
+
+// --------------------------------------------------------
+
+
