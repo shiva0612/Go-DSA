@@ -375,3 +375,103 @@ func leftView(node *Node, level int, ds *[]int) {
 	leftView(node.Right, level+1, ds)
 
 }
+
+// --------------------------------------------------------
+func helpLeft(node *Node, ds *[]int) {
+	for node != nil {
+		if !isLeaf(node) {
+			*ds = append(*ds, node.Val)
+		}
+		if node.Left != nil {
+			node = node.Left
+		} else {
+			node = node.Right
+		}
+	}
+}
+func helpleaf(node *Node, ds *[]int) {
+
+	if isLeaf(node) {
+		*ds = append(*ds, node.Val)
+		return
+	}
+	if node.Left != nil {
+		helpleaf(node.Left, ds)
+	}
+	if node.Right != nil {
+		helpleaf(node.Right, ds)
+	}
+}
+
+func isLeaf(node *Node) bool {
+	return node.Left == nil && node.Right == nil
+}
+
+func helpRightReverse(node *Node, ds *[]int) {
+	stack := []int{}
+
+	for node != nil {
+		if !isLeaf(node) {
+			stack = append(stack, node.Val)
+		}
+		if node.Right != nil {
+			node = node.Right
+		} else {
+			node = node.Left
+		}
+	}
+
+	//populate ds from stack
+	for i := len(stack) - 2; i > 0; i-- {
+		*ds = append(*ds, stack[i])
+	}
+}
+func BoundaryClockWise(node *Node) []int {
+	ans := []int{}
+	if node == nil {
+		return ans
+	}
+	if !isLeaf(node) {
+		ans = append(ans, node.Val)
+	}
+	helpLeft(node.Left, &ans)
+	helpleaf(node.Right, &ans)
+	helpRightReverse(node, &ans)
+	return ans
+}
+
+// --------------------------------------------------------
+// verify again
+func zigzag(node *Node) [][]int {
+	ans := [][]int{}
+	f := -1
+	q := new(Queue)
+	if node == nil {
+		return ans
+	}
+	q.Push(node)
+
+	for q.Len() > 0 {
+
+		temp := []int{}
+		for i := 0; i < q.Len(); i++ {
+			top := q.Pop()
+			if top.Left != nil {
+				q.Push(top.Left)
+			}
+			if top.Right != nil {
+				q.Push(top.Right)
+			}
+
+			if f < 0 {
+				temp = append(temp, top.Val)
+			} else {
+				temp = append([]int{top.Val}, temp...)
+			}
+		}
+		f *= -1
+		ans = append(ans, temp)
+
+	}
+	return ans
+}
