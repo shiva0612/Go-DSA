@@ -479,24 +479,97 @@ func zigzag(node *Node) [][]int {
 // --------------------------------------------------------
 
 func isSymetric(node *Node) bool {
-	if node == nil{
+	if node == nil {
 		return true
 	}
-	return helpSymetric(node.Left,node.Right)
+	return helpSymetric(node.Left, node.Right)
 }
 
-func helpSymetric(left,right *Node) bool  {
-	if left == nil || right == nil{
+func helpSymetric(left, right *Node) bool {
+	if left == nil || right == nil {
 		return left == right
 	}
-	if left.Val != right.Val{
+	if left.Val != right.Val {
 		return false
 	}
-	return helpSymetric(left.Left,right.Right) && helpSymetric(left.Right,right.Left)
+	return helpSymetric(left.Left, right.Right) && helpSymetric(left.Right, right.Left)
 }
 
 // --------------------------------------------------------
 
+func rootToNodePath(node *Node, arr *[]int, find int) bool {
+
+	if node == nil {
+		return false
+	}
+	*arr = append(*arr, node.Val)
+	if node.Val == find {
+		return true
+	}
+	if rootToNodePath(node.Left, arr, find) || rootToNodePath(node.Right, arr, find) {
+		return true
+	}
+	*arr = (*arr)[:len(*arr)-1]
+	return false
+
+}
+
 // --------------------------------------------------------
 
+func lowestCommonAncestor(node *Node, p, q int) *Node {
 
+	if node == nil {
+		return node
+	}
+	if node.Val == p || node.Val == q {
+		return node
+	}
+	left := lowestCommonAncestor(node.Left, p, q)
+	right := lowestCommonAncestor(node.Right, p, q)
+	if left == nil {
+		return right
+	}
+	if right == nil {
+		return left
+	}
+	return node
+}
+
+// --------------------------------------------------------
+
+func maxWidth(node *Node) int {
+
+	if node == nil {
+		return 0
+	}
+	q := new(Queue)
+	q.Push(node)
+	width := 0
+	for q.Len() > 0 {
+		l := q.Len()
+		levelMin := q.Top().RowIndex
+		var first, last int
+		for i := 0; i < l; i++ {
+			top := q.Pop()
+			top.RowIndex -= levelMin
+			if i == 0 {
+				first = top.RowIndex
+			}
+			if i == l-1 {
+				last = top.RowIndex
+			}
+			if node.Left != nil {
+				node.RowIndex = 2*node.RowIndex + 1
+				q.Push(node.Left)
+			}
+			if node.Right != nil {
+				node.RowIndex = 2*node.RowIndex + 2
+				q.Push(node.Right)
+			}
+		}
+		if last-first+1 > width {
+			width = last - first + 1
+		}
+	}
+	return width
+}
