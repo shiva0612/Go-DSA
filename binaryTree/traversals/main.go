@@ -13,6 +13,10 @@ type Node struct {
 	RowIndex int
 }
 
+func NewNode(val int) *Node {
+	return &Node{Val: val}
+}
+
 // ----------------------------------------------
 type Stack struct {
 	arr []*Node
@@ -66,6 +70,16 @@ func (q *Queue) Len() int {
 	return len(q.arr)
 }
 
+func (q *Queue) print() {
+	fmt.Println("")
+	fmt.Print("q = ")
+	for _, node := range q.arr {
+		fmt.Print(node.Val)
+	}
+	fmt.Println("")
+
+}
+
 // ----------------------------------------------
 func max(a, b int) int {
 	if a > b {
@@ -77,7 +91,18 @@ func max(a, b int) int {
 // ----------------------------------------------
 
 func main() {
+	r := NewNode(3)
+	r.Left = NewNode(5)
+	r.Left.Left = NewNode(6)
+	r.Left.Right = NewNode(2)
+	r.Left.Right.Left = NewNode(7)
+	r.Left.Right.Right = NewNode(4)
+	r.Right = NewNode(1)
+	r.Right.Left = NewNode(0)
+	r.Right.Right = NewNode(8)
 
+	ans := findNodesAtKDist(r, r.Left, 5, 2)
+	fmt.Println(ans)
 }
 
 func PreR(node *Node) {
@@ -573,3 +598,86 @@ func maxWidth(node *Node) int {
 	}
 	return width
 }
+
+// --------------------------------------------------------
+
+func findNodesAtKDist(root, target *Node, n, k int) []int {
+	ans := []int{}
+	parent := map[*Node]*Node{}
+	var node *Node
+	helpGetNodeAssignParent(root, nil, node, n, parent)
+	node = target
+	if node == nil {
+		return ans //source node not found
+	}
+	for k, v := range parent {
+
+		if v != nil {
+			fmt.Printf("%d : %d\n", k.Val, v.Val)
+		} else {
+			fmt.Printf("%d : nil\n", k.Val)
+		}
+
+	}
+
+	q := new(Queue)
+	q.Push(node)
+	vis := []int{}
+	dist := k
+
+	for q.Len() > 0 && dist > 0 {
+		l := q.Len()
+		q.print()
+		fmt.Println("vis = ",vis)
+		for i := 0; i < l; i++ {
+			top := q.Pop()
+			if top.Left != nil && !isVisited(vis, top.Left.Val) {
+				q.Push(top.Left)
+			}
+			if top.Right != nil && !isVisited(vis, top.Right.Val) {
+				q.Push(top.Right)
+			}
+			if parent[top] != nil && !isVisited(vis, parent[top].Val) {
+				q.Push(parent[top])
+			}
+			vis = append(vis, top.Val)
+		}
+		q.print()
+		fmt.Println("vis = ",vis)
+		fmt.Println("------------------")
+		dist--
+	}
+
+	for q.Len() > 0 {
+		top := q.Pop()
+		ans = append(ans, top.Val)
+	}
+
+	return ans
+}
+
+func isVisited(vis []int, n int) bool {
+	for _, v := range vis {
+		if v == n {
+			return true
+		}
+	}
+	return false
+}
+func helpGetNodeAssignParent(node, parent, find *Node, n int, m map[*Node]*Node) {
+	if node == nil {
+		return
+	}
+	if node.Val == n {
+		find = node
+	}
+	m[node] = parent
+	helpGetNodeAssignParent(node.Left, node, find, n, m)
+	helpGetNodeAssignParent(node.Right, node, find, n, m)
+}
+
+// --------------------------------------------------------
+
+// --------------------------------------------------------
+
+// --------------------------------------------------------
