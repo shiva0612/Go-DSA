@@ -50,7 +50,7 @@ type Queue struct {
 }
 
 func (q *Queue) Push(node *Node) {
-	q.arr = append([]*Node{node}, q.arr...)
+	q.arr = append(q.arr, node)
 }
 func (q *Queue) Pop() *Node {
 	if q.Len() > 0 {
@@ -91,17 +91,14 @@ func max(a, b int) int {
 // ----------------------------------------------
 
 func main() {
-	r := NewNode(3)
-	r.Left = NewNode(5)
-	r.Left.Left = NewNode(6)
-	r.Left.Right = NewNode(2)
-	r.Left.Right.Left = NewNode(7)
-	r.Left.Right.Right = NewNode(4)
-	r.Right = NewNode(1)
-	r.Right.Left = NewNode(0)
-	r.Right.Right = NewNode(8)
 
-	ans := findNodesAtKDist(r, r.Left, 5, 2)
+	// node := cnstrTree_prein([]int{10, 20, 40, 50, 30, 60}, []int{40, 20, 50, 10, 60, 30})
+	// PostR(node)
+	// node := cnstrTree_postin([]int{60, 30, 50, 40, 20, 10}, []int{40, 20, 50, 10, 60, 30})
+	// PostR(node)
+
+	r := cnstrTree_prein([]int{3, 5, 6, 2, 7, 4, 1, 0, 8}, []int{6, 5, 7, 2, 4, 3, 0, 1, 8})
+	ans := findNodesAtKDist(r, 5, 2)
 	fmt.Println(ans)
 }
 
@@ -601,24 +598,14 @@ func maxWidth(node *Node) int {
 
 // --------------------------------------------------------
 
-func findNodesAtKDist(root, target *Node, n, k int) []int {
+func findNodesAtKDist(root *Node, n, k int) []int {
 	ans := []int{}
 	parent := map[*Node]*Node{}
-	var node *Node
-	helpGetNodeAssignParent(root, nil, node, n, parent)
-	node = target
+	node := findNodeWithVal(root, n)
 	if node == nil {
 		return ans //source node not found
 	}
-	for k, v := range parent {
-
-		if v != nil {
-			fmt.Printf("%d : %d\n", k.Val, v.Val)
-		} else {
-			fmt.Printf("%d : nil\n", k.Val)
-		}
-
-	}
+	helpGetNodeAssignParent(root, nil, parent)
 
 	q := new(Queue)
 	q.Push(node)
@@ -627,8 +614,6 @@ func findNodesAtKDist(root, target *Node, n, k int) []int {
 
 	for q.Len() > 0 && dist > 0 {
 		l := q.Len()
-		q.print()
-		fmt.Println("vis = ",vis)
 		for i := 0; i < l; i++ {
 			top := q.Pop()
 			if top.Left != nil && !isVisited(vis, top.Left.Val) {
@@ -642,9 +627,6 @@ func findNodesAtKDist(root, target *Node, n, k int) []int {
 			}
 			vis = append(vis, top.Val)
 		}
-		q.print()
-		fmt.Println("vis = ",vis)
-		fmt.Println("------------------")
 		dist--
 	}
 
@@ -664,20 +646,79 @@ func isVisited(vis []int, n int) bool {
 	}
 	return false
 }
-func helpGetNodeAssignParent(node, parent, find *Node, n int, m map[*Node]*Node) {
+func helpGetNodeAssignParent(node, parent *Node, m map[*Node]*Node) {
 	if node == nil {
 		return
 	}
-	if node.Val == n {
-		find = node
-	}
 	m[node] = parent
-	helpGetNodeAssignParent(node.Left, node, find, n, m)
-	helpGetNodeAssignParent(node.Right, node, find, n, m)
+	helpGetNodeAssignParent(node.Left, node, m)
+	helpGetNodeAssignParent(node.Right, node, m)
+}
+func findNodeWithVal(node *Node, val int) *Node {
+	if node == nil {
+		return nil
+	}
+	if node.Val == val {
+		return node
+	}
+	if l := findNodeWithVal(node.Left, val); l != nil {
+		return l
+	}
+	if r := findNodeWithVal(node.Right, val); r != nil {
+		return r
+	}
+	return nil
 }
 
 // --------------------------------------------------------
 
+func cnstrTree_prein(pre, in []int) *Node {
+
+	inMap := map[int]int{}
+	for i, v := range in {
+		inMap[v] = i
+	}
+
+	return helpCnstr_prein(pre, 0, len(pre)-1, in, 0, len(in)-1, inMap)
+}
+
+func helpCnstr_prein(pre []int, preStart, preEnd int, in []int, inStart, inEnd int, m map[int]int) *Node {
+	if preStart > preEnd || inStart > inEnd {
+		return nil
+	}
+
+	node := NewNode(pre[preStart])
+	rootIdx := m[node.Val]
+	numsLeft := rootIdx - inStart
+
+	node.Left = helpCnstr_prein(pre, preStart+1, preStart+numsLeft, in, inStart, rootIdx-1, m)
+	node.Right = helpCnstr_prein(pre, preStart+numsLeft+1, preEnd, in, rootIdx+1, inEnd, m)
+	return node
+}
+
 // --------------------------------------------------------
+
+func cnstrTree_postin(post, in []int) *Node {
+	inMap := map[int]int{}
+	for i, v := range in {
+		inMap[v] = i
+	}
+
+	return helpCnstr_postin(post, 0, len(post)-1, in, 0, len(in)-1, inMap)
+}
+
+func helpCnstr_postin(post []int, postStart, postEnd int, in []int, inStart, inEnd int, m map[int]int) *Node {
+
+	if inStart > inEnd || postStart > postEnd {
+		return nil
+	}
+	node := NewNode(post[postEnd])
+	rootIdx := m[node.Val]
+	numsLeft := rootIdx - inStart
+
+	node.Left = helpCnstr_postin(post, postEnd-numsLeft, postEnd-1, in, inStart, rootIdx-1, m)
+	node.Right = helpCnstr_postin(post, postStart, postEnd-numsLeft-1, in, rootIdx+1, inEnd, m)
+	return node
+}
 
 // --------------------------------------------------------
