@@ -12,6 +12,26 @@ func main() {
 	reverse3(a)
 }
 
+func helpReverse(s string) string {
+	rev := []byte{}
+	for i := len(s) - 1; i >= 0; i-- {
+		rev = append(rev, s[i])
+	}
+	return string(rev)
+}
+func reverse_final(s string) string {
+	ans := ""
+	start := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == ' ' {
+			ans = ans + helpReverse(s[start:i]) + " "
+		} else if i == len(s)-1 {
+			ans = ans + helpReverse(s[start:]) + " "
+		}
+		start = i + 1
+	}
+}
+
 func reverse1(a string) {
 	s := strings.Fields(a)
 	l, h := 0, len(s)-1
